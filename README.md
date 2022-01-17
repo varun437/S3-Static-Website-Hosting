@@ -90,3 +90,68 @@ In the next step, you configure your subdomain \(`www.example.com`\) to redirect
 1. For **Protocol**, choose **http**\.
 
 1. Choose **Save changes**\.
+
+## Step 5: Configure logging for website traffic<a name="root-domain-walkthrough-configure-logging"></a>
+
+**To enable server access logging for your root domain bucket**
+
+1. Open the Amazon S3 console at [https://console\.aws\.amazon\.com/s3/](https://console.aws.amazon.com/s3/)\.
+
+1. In the same Region where you created the bucket that is configured as a static website, create a bucket for logging, for example `logs.example.com`\.
+
+1. Create a folder for the server access logging log files \(for example, `logs`\)\.
+
+1. \(Optional\) If you want to use CloudFront to improve your website performance, create a folder for the CloudFront log files \(for example, `cdn`\)\.
+
+1. In the **Buckets** list, choose your root domain bucket\.
+
+1. Choose **Properties**\.
+
+1. Under **Server access logging**, choose **Edit**\.
+
+1. Choose **Enable**\.
+
+1. Under the **Target bucket**, choose the bucket and folder destination for the server access logs:
+   + Browse to the folder and bucket location:
+
+     1. Choose **Browse S3**\.
+
+     1. Choose the bucket name, and then choose the logs folder\. 
+
+     1. Choose **Choose path**\.
+   + Enter the S3 bucket path, for example, `s3://logs.example.com/logs/`\.
+
+1. Choose **Save changes**\.
+
+   In your log bucket, you can now access your logs\. Amazon S3 writes website access logs to your log bucket every 2 hours\.
+
+## Step 6: Upload index and website content<a name="upload-website-content"></a>
+
+**To configure the index document**
+
+1. Create an `index.html` file\.
+
+   If you don't have an `index.html` file, you can use the following HTML to create one:
+
+   ```
+   <html xmlns="http://www.w3.org/1999/xhtml" >
+   <head>
+       <title>My Website Home Page</title>
+   </head>
+   <body>
+     <h1>Welcome to my website</h1>
+     <p>Now hosted on Amazon S3!</p>
+   </body>
+   </html>
+   ```
+
+1. Save the index file locally with the *exact* index document name that you entered when you enabled static website hosting for your bucket \(for example, `index.html`\)\.
+
+1. Sign in to the AWS Management Console and open the Amazon S3 console at [https://console\.aws\.amazon\.com/s3/](https://console.aws.amazon.com/s3/)\.
+
+1. In the **Buckets** list, choose the name of the bucket that you want to use to host a static website\.
+
+1. Enable static website hosting for your bucket, and enter the exact name of your index document \(for example, `index.html`\)\.
+1. To upload the index document to your bucket, do one of the following:
+   + Drag and drop the index file into the console bucket listing\.
+   + Choose **Upload**, and follow the prompts to choose and upload the index file\.
