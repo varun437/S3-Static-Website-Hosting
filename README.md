@@ -44,3 +44,49 @@ These bucket names must exactly match your domain name\. In this example, the do
    1. To accept the default settings and create the bucket, choose **Create**\.
 
 In the next step, you configure `example.com` for website hosting\. 
+
+## Step 3: Configure your root domain bucket for website hosting<a name="root-domain-walkthrough-configure-bucket-aswebsite"></a>
+
+**To enable static website hosting**
+
+1. Sign in to the AWS Management Console and open the Amazon S3 console at [https://console\.aws\.amazon\.com/s3/](https://console.aws.amazon.com/s3/)\.
+
+1. In the **Buckets** list, choose the name of the bucket that you want to enable static website hosting for\.
+
+1. Choose **Properties**\.
+
+1. Under **Static website hosting**, choose **Edit**\.
+
+1. Choose **Use this bucket to host a website**\. 
+
+1. Under **Static website hosting**, choose **Enable**\.
+
+1. In **Index document**, enter the file name of the index document, typically `index.html`\. 
+
+1. Choose **Save changes**\.
+
+   Amazon S3 enables static website hosting for your bucket\. At the bottom of the page, under **Static website hosting**, you see the website endpoint for your bucket\.
+
+1. Under **Static website hosting**, note the **Endpoint**\.
+
+   The **Endpoint** is the Amazon S3 website endpoint for your bucket\. After you finish configuring your bucket as a static website, you can use this endpoint to test your website\.
+
+In the next step, you configure your subdomain \(`www.example.com`\) to redirect requests to your domain \(`example.com`\)\. 
+
+## Step 4: Configure your subdomain bucket for website redirect<a name="root-domain-walkthrough-configure-redirect"></a>
+
+**To configure a redirect request**
+
+1. On the Amazon S3 console, in the **Buckets** list, choose your subdomain bucket name \(`www.example.com` in this example\)\.
+
+1. Choose **Properties**\.
+
+1. Under **Static website hosting**, choose **Edit**\.
+
+1. Choose **Redirect requests for an object**\. 
+
+1. In the **Target bucket** box, enter your root domain, for example, **example\.com**\.
+
+1. For **Protocol**, choose **http**\.
+
+1. Choose **Save changes**\.
