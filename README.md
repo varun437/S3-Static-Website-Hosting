@@ -155,3 +155,132 @@ In the next step, you configure your subdomain \(`www.example.com`\) to redirect
 1. To upload the index document to your bucket, do one of the following:
    + Drag and drop the index file into the console bucket listing\.
    + Choose **Upload**, and follow the prompts to choose and upload the index file\.
+
+## Step 7: Edit S3 Block Public Access settings<a name="root-domain-walkthrough-configure-bucket-permissions"></a>
+
+By default, Amazon S3 blocks public access to your account and buckets\. If you want to use a bucket to host a static website, you can use these steps to edit your block public access settings\. 
+
+**Warning**  
+Before you complete this step, review [Using Amazon S3 Block Public Access](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html) to ensure that you understand and accept the risks involved with allowing public access\. When you turn off block public access settings to make your bucket public, anyone on the internet can access your bucket\. We recommend that you block all public access to your buckets\.
+
+1. Open the Amazon S3 console at [https://console\.aws\.amazon\.com/s3/](https://console.aws.amazon.com/s3/)\.
+
+1. Choose the name of the bucket that you have configured as a static website\.
+
+1. Choose **Permissions**\.
+
+1. Under **Block public access \(bucket settings\)**, choose **Edit**\.
+
+1. Clear **Block *all* public access**, and choose **Save changes**\.
+
+## Step 8: Attach a bucket policy<a name="add-bucket-policy-root-domain"></a>
+
+**Important**  
+The following policy is an example only and allows full access to the contents of your bucket\. Before you proceed with this step, review [How can I secure the files in my Amazon S3 bucket?](https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-resources/) to ensure that you understand the best practices for securing the files in your S3 bucket and risks involved in granting public access\.
+
+1. Under **Buckets**, choose the name of your bucket\.
+
+1. Choose **Permissions**\.
+
+1. Under **Bucket Policy**, choose **Edit**\.
+
+1. To grant public read access for your website, copy the following bucket policy, and paste it in the **Bucket policy editor**\.
+
+   ```
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "PublicReadGetObject",
+               "Effect": "Allow",
+               "Principal": "*",
+               "Action": [
+                   "s3:GetObject"
+               ],
+               "Resource": [
+                   "arn:aws:s3:::example.com/*"
+               ]
+           }
+       ]
+   }
+   ```
+
+1. Update the `Resource` to your bucket name\.
+
+1. Choose **Save changes**\.
+
+## Step 9: Test your domain endpoint<a name="root-domain-walkthrough-test-website"></a>
+
+After you configure your domain bucket to host a public website, you can test your endpoint\. You will only be able to test the endpoint for your domain bucket since your subdomain bucket is set up for website redirect and not static website hosting\. 
+
+**Note**  
+Amazon S3 does not support HTTPS access to the website\. If you want to use HTTPS, you can use Amazon CloudFront to serve a static website hosted on Amazon S3\.  
+For more information, see [How do I use CloudFront to serve a static website hosted on Amazon S3?](https://adamtheautomator.com/aws-s3-static-ssl-website/) 
+
+1. Under **Buckets**, choose the name of your bucket\.
+
+1. Choose **Properties**\.
+
+1. At the bottom of the page, under **Static website hosting**, choose your **Bucket website endpoint**\.
+
+## Step 10: Add alias records for your domain and subdomain<a name="root-domain-walkthrough-add-record-to-hostedzone"></a>
+
+### Add an alias record for your root domain and subdomain<a name="add-alis-record"></a>
+
+**To add an alias record for your root domain \(`example.com`\)**
+
+1. Open the Route 53 console at [https://console\.aws\.amazon\.com/route53/](https://console.aws.amazon.com/route53/)\.
+**Note**  
+If you don't already use Route 53, see [Step 1: Register a Domain](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/getting-started.html#getting-started-find-domain-name) in the *Amazon Route 53 Developer Guide*\. After completing your setup, you can resume the instructions\.
+
+1. Choose **Hosted zones**\.
+
+1. In the list of hosted zones, choose the name of the hosted zone that matches your domain name\.
+
+1. Choose **Create record**\.
+
+1. Choose **Simple routing**, and choose **Next**\.
+
+1. Choose **Define simple record**\.
+
+1. In **Record name** accept the default value, which is the name of your hosted zone and your domain\.
+
+1. In **Value/Route traffic to**, choose **Alias to S3 website endpoint**\.
+
+1. Choose the Region\.
+
+1. Choose the S3 bucket\.
+
+1. In **Record type**, choose **A ‐ Routes traffic to an IPv4 address and some AWS resources**\.
+
+1. For **Evaluate target health**, choose **No**\.
+
+1. Choose **Define simple record**\.
+
+**To add an alias record for your subdomain \(`www.example.com`\)**
+
+1. In the hosted zone for your root domain \(`example.com`\), choose **Create record**\.
+
+1. In **Record name** for your subdomain, type `www`\.
+
+1. In **Value/Route traffic to**, choose **Alias to S3 website endpoint**\.
+
+1. Choose the Region\.
+
+1. Choose the S3 bucket, for example `example.com (s3-website-us-west-2.amazonaws.com)`\.
+
+1. In **Record type**, choose **A ‐ Routes traffic to an IPv4 address and some AWS resources**\.
+
+1. For **Evaluate target health**, choose **No**\.
+
+1. Choose **Define simple record**\.
+
+## Step 11: Test the website<a name="root-domain-testing"></a>
+
+Verify that the website and the redirect work correctly\. In your browser, enter your URLs\. In this example, you can try the following URLs:
++ **Domain** \(`http://example.com`\) – Displays the index document in the `example.com` bucket\.
++ **Subdomain **\(`http://www.example.com`\) – Redirects your request to `http://example.com`\. You see the index document in the `example.com` bucket\.
+
+If your website or redirect links don't work, you can try the following:
++ **Clear cache**–Clear the cache of your web browser\.
++ **Check name servers**–If your web page and redirect links don't work after you've cleared your cache, you can compare the name servers for your domain and the name servers for your hosted zone\. If the name servers don't match, you might need to update your domain name servers to match those listed under your hosted zone\.
